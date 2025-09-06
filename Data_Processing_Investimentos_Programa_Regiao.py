@@ -152,8 +152,8 @@ else:
         worksheet = writer.sheets['investimentos_programa_regiao']
         money_formatting = workbook.add_format({'num_format':'R$#,##0'})
         perc_formatting = workbook.add_format({'num_format':'0.0%'})
-        worksheet.set_column('G:J', 15, money_formatting)
-        worksheet.set_column('K:L', 15, perc_formatting)
+        worksheet.set_column('I:L', 15, money_formatting)
+        worksheet.set_column('M:N', 15, perc_formatting)
         worksheet.set_column('A:F', 15)
     
     # Full Cleasing
