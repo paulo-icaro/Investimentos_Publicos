@@ -44,12 +44,11 @@ for x in range(len(folder_files)):
     
     dataset = pd.read_excel(io = 'Dataset/Investimentos_Programa_Regiao/' + folder_files[x],
                           header = 10,
-                          usecols= 'C, F, I:K, N, Q, R',
-                          names = ['codigo', 'descricao', 'lei', 'lei+cred', 'empenhado', 'pago', '%emp', '%pago'],
-                          dtype = {'codigo':str})#, '%emp':float, '%pago':float})
+                          usecols= 'C, F, K, N',
+                          names = ['codigo', 'descricao', 'empenhado', 'pago'],
+                          dtype = {'codigo':str})
     dataset = dataset.dropna()                                                                              # Remove na's
-    dataset['%emp'] = dataset['%emp'].astype(str).str.replace(',', '.', regex = False)                      # Setting standard decimal separator
-    dataset['%pago'] = dataset['%pago'].astype(str).str.replace(',', '.', regex = False)                    # Setting standard decimal separator
+    
     
     # --------------- #
     # --- Program --- #
@@ -59,6 +58,11 @@ for x in range(len(folder_files)):
                                  tipo = folder_files[x][9:14],
                                  ano = folder_files[x][4:8],
                                  mes = folder_files[x][0:3])    
+        
+        replacements = {'JAN':'01', 'FEV':'02', 'MAR':'03', 'ABR':'04', 'MAI':'05', 'JUN':'06', 'JUL':'07', 'AGO':'08', 'SET':'09', 'OUT':'10', 'NOV':'11', 'DEZ':'12'}
+        for old, new in replacements.items():
+            dataset['mes'] = dataset['mes'].replace(old,new)
+            
         
         # Identifying Program rows
         for i in range(len(dataset)):
@@ -72,9 +76,9 @@ for x in range(len(folder_files)):
         dataset = dataset[~remove_rows]
         
         # Reordering and renaming
-        dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'lei', 'lei+cred', 'empenhado', 'pago', '%emp', '%pago'])
+        dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'empenhado', 'pago'])
         dataset.rename(columns = {'descricao':'program', 'codigo':'cod_program'}, inplace = True)
-    
+        
     
     
     # -------------------------- #
@@ -86,7 +90,12 @@ for x in range(len(folder_files)):
                                  periodo = folder_files[x][0:8],
                                  tipo = folder_files[x][9:14],
                                  ano = folder_files[x][4:8],
-                                 mes = folder_files[x][0:3])    
+                                 mes = folder_files[x][0:3])
+        
+        replacements = {'JAN':'01', 'FEV':'02', 'MAR':'03', 'ABR':'04', 'MAI':'05', 'JUN':'06', 'JUL':'07', 'AGO':'08', 'SET':'09', 'OUT':'10', 'NOV':'11', 'DEZ':'12'}
+        for old, new in replacements.items():
+            dataset['mes'] = dataset['mes'].replace(old,new)
+            
     
         # Identifying Program rows
         for i in range(len(dataset)):
@@ -105,7 +114,7 @@ for x in range(len(folder_files)):
         dataset = dataset[~remove_rows]
     
         # Reordering and renaming
-        dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'cod_program', 'program', 'lei', 'lei+cred', 'empenhado', 'pago', '%emp', '%pago'])
+        dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'cod_program', 'program', 'empenhado', 'pago'])
         dataset.rename(columns = {'descricao':'regiao', 'codigo':'cod_regiao'}, inplace = True)
         
 
@@ -114,12 +123,20 @@ for x in range(len(folder_files)):
         dataset_full = dataset
     else:
         dataset_full = pd.concat([dataset_full, dataset])
+        
+        
+    
+    
+# ======================================= #
+# === Adjustments for cumulative data === #
+# ======================================= #
+
+# --------------- #
+# --- Sorting --- #
+# --------------- #
+dataset_full = dataset_full.sort_values(by = ['cod_program', 'regiao', 'tipo', 'ano', 'mes'])
 
 
-
-# Adjustments for percentage formatting
-dataset_full['%emp'] = pd.to_numeric(dataset_full['%emp'])/100
-dataset_full['%pago'] = pd.to_numeric(dataset_full['%pago'])/100
 
 
 
@@ -170,13 +187,13 @@ else:
         dataset_full.to_excel(excel_writer = writer, sheet_name = 'investimentos_programa_regiao', index = False)
 
         # Just Formatting the Excel Sheet (not needed in case of vertical adjustment)
-        #workbook = writer.book
-        #worksheet = writer.sheets['investimentos_programa_regiao']
-        #money_formatting = workbook.add_format({'num_format':'R$#,##0'})
-        #perc_formatting = workbook.add_format({'num_format':'0.0%'})
-        #worksheet.set_column('I:L', 15, money_formatting)
-        #worksheet.set_column('M:N', 15, perc_formatting)
-        #worksheet.set_column('A:F', 15)
+        '''workbook = writer.book
+        worksheet = writer.sheets['investimentos_programa_regiao']
+        money_formatting = workbook.add_format({'num_format':'R$#,##0'})
+        perc_formatting = workbook.add_format({'num_format':'0.0%'})
+        worksheet.set_column('I:L', 15, money_formatting)
+        worksheet.set_column('M:N', 15, perc_formatting)
+        worksheet.set_column('A:F', 15)'''
     
     # Full Cleasing
     del(dataset, folder_files, i, info_desired, n_char, remove_rows, writer, x, last_program, cod_last_program)#, money_formatting, perc_formatting, workbook, worksheet)
