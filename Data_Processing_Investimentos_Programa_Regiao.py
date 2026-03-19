@@ -91,7 +91,7 @@ for x in range(len(folder_files)):
                                  ano = folder_files[x][4:8],
                                  mes = folder_files[x][0:3])    
         
-        # R--- eplacements --- #
+        # --- Replacements --- #
         replacements = {'JAN':'01', 'FEV':'02', 'MAR':'03', 'ABR':'04', 'MAI':'05', 'JUN':'06', 'JUL':'07', 'AGO':'08', 'SET':'09', 'OUT':'10', 'NOV':'11', 'DEZ':'12'}
         for old, new in replacements.items():
             dataset['mes'] = dataset['mes'].replace(old,new)        
@@ -111,7 +111,7 @@ for x in range(len(folder_files)):
     # -------------------------- #
     # --- Program and Region --- #
     # -------------------------- #        
-    else:        
+    if info_desired == 'rp' or info_desired == 'pr':        
         dataset = dataset.assign(cod_programa = np.nan, 
                                  programa = np.nan,                                                                 # Add empty column programa
                                  periodo = folder_files[x][0:8],
@@ -139,6 +139,8 @@ for x in range(len(folder_files)):
         dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'cod_programa', 'programa', 'empenhado', 'pago'])
         dataset.rename(columns = {'descricao':'regiao', 'codigo':'cod_regiao'}, inplace = True)
         
+        
+    
 
     # ------------------------- #    
     # --- Stacking datasets --- #
