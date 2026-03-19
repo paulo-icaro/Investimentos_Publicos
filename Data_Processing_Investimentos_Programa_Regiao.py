@@ -65,19 +65,18 @@ for x in range(len(folder_files)):
                                  ano = folder_files[x][4:8],
                                  mes = folder_files[x][0:3])    
         
-        # Replacements
+        # --- Replacements --- #
         replacements = {'JAN':'01', 'FEV':'02', 'MAR':'03', 'ABR':'04', 'MAI':'05', 'JUN':'06', 'JUL':'07', 'AGO':'08', 'SET':'09', 'OUT':'10', 'NOV':'11', 'DEZ':'12'}
         for old, new in replacements.items():
             dataset['mes'] = dataset['mes'].replace(old,new)
         
-        # Identifying Region rows
+        # --- Identifying Region rows --- #
         program_flag = dataset['codigo'].str.len() == 2            
         
-        # Removing cases where column descricao has 2 characters
-        program_flag = dataset['codigo'].str.len() == 2
+        # --- Removing cases where column descricao has 2 characters --- #
         dataset = dataset[~program_flag]
         
-        # Reordering and renaming
+        # --- Reordering and renaming --- #
         dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'empenhado', 'pago'])
         dataset.rename(columns = {'descricao':'programa', 'codigo':'cod_programa'}, inplace = True)
         
@@ -92,18 +91,18 @@ for x in range(len(folder_files)):
                                  ano = folder_files[x][4:8],
                                  mes = folder_files[x][0:3])    
         
-        # Replacements
+        # R--- eplacements --- #
         replacements = {'JAN':'01', 'FEV':'02', 'MAR':'03', 'ABR':'04', 'MAI':'05', 'JUN':'06', 'JUL':'07', 'AGO':'08', 'SET':'09', 'OUT':'10', 'NOV':'11', 'DEZ':'12'}
         for old, new in replacements.items():
             dataset['mes'] = dataset['mes'].replace(old,new)        
         
-        # Identifying Program rows
+        # --- Identifying Program rows --- #
         region_flag = dataset['codigo'].str.len() == 3        
         
-        # Removing cases where column descricao has 3 characters        
+        # --- Removing cases where column descricao has 3 characters --- #
         dataset = dataset[~region_flag]
         
-        # Reordering and renaming
+        # --- Reordering and renaming --- #
         dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'empenhado', 'pago'])
         dataset.rename(columns = {'descricao':'regiao', 'codigo':'cod_regiao'}, inplace = True)
 
@@ -120,23 +119,23 @@ for x in range(len(folder_files)):
                                  ano = folder_files[x][4:8],
                                  mes = folder_files[x][0:3])
         
-        # Replacements
+        # --- Replacements --- #
         replacements = {'JAN':'01', 'FEV':'02', 'MAR':'03', 'ABR':'04', 'MAI':'05', 'JUN':'06', 'JUL':'07', 'AGO':'08', 'SET':'09', 'OUT':'10', 'NOV':'11', 'DEZ':'12'}
         for old, new in replacements.items():
             dataset['mes'] = dataset['mes'].replace(old,new)            
     
-        # Identifying Program rows
+        # --- Identifying Program rows --- #
         program_flag = dataset['codigo'].str.len() == 3        
         
-        # Filling Columns
+        # --- Filling Columns --- #
         dataset.loc[program_flag, 'cod_programa'] = dataset['codigo']
         dataset.loc[program_flag, 'programa'] = dataset['descricao']
         dataset[['cod_programa','programa']] = dataset[['cod_programa','programa']].ffill()        
             
-        # Removing cases where column codigo has 3 characters
+        # --- Removing cases where column codigo has 3 characters --- #
         dataset = dataset[~program_flag]
     
-        # Reordering and renaming
+        # --- Reordering and renaming --- #
         dataset = dataset.reindex(columns = ['periodo', 'ano', 'mes', 'tipo', 'codigo', 'descricao', 'cod_programa', 'programa', 'empenhado', 'pago'])
         dataset.rename(columns = {'descricao':'regiao', 'codigo':'cod_regiao'}, inplace = True)
         
@@ -237,13 +236,13 @@ elif info_desired == 'r':
         worksheet.set_column('K:L', 15, perc_formatting)
         worksheet.set_column('A:F', 15)'''
     
-    # Full Cleasing
+    # --- Full Cleasing --- #
     del(dataset, folder_files, i, info_desired, writer, x, new, old, replacements, region_flag)#, money_formatting, perc_formatting, workbook, worksheet)
 
 
 else:
     
-    # Vertical dataset adjustment
+    # --- Vertical dataset adjustment --- #
     dataset_full = dataset_full.melt(
         id_vars = ['periodo', 'ano', 'mes', 'tipo', 'cod_regiao', 'regiao', 'cod_programa', 'programa'],
         value_vars = ['empenhado_acumulado', 'pago_acumulado', 'empenhado_mensal', 'pago_mensal'],
@@ -265,5 +264,5 @@ else:
         worksheet.set_column('M:N', 15, perc_formatting)
         worksheet.set_column('A:F', 15)'''
     
-    # Full Cleasing
+    # --- Full Cleasing --- #
     del(dataset, folder_files, i, info_desired, writer, x, last_program, cod_last_program, new, old, replacements, program_flag)#, money_formatting, perc_formatting, workbook, worksheet)
