@@ -267,4 +267,4 @@ else:
         worksheet.set_column('A:F', 15)'''
     
     # --- Full Cleasing --- #
-    del(dataset, folder_files, i, info_desired, writer, x, last_program, cod_last_program, new, old, replacements, program_flag)#, money_formatting, perc_formatting, workbook, worksheet)
+    del(dataset, folder_files, i, info_desired, writer, x, new, old, replacements, program_flag)#, money_formatting, perc_formatting, workbook, worksheet)
