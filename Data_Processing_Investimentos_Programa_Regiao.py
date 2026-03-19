@@ -8,7 +8,6 @@
 # === Libraries === #
 # ================= #
 import pandas as pd
-import numpy as np
 import os
 #from openpyxl import load_workbook
 
@@ -112,8 +111,8 @@ for x in range(len(folder_files)):
     # --- Program and Region --- #
     # -------------------------- #        
     if info_desired == 'rp' or info_desired == 'pr':        
-        dataset = dataset.assign(cod_programa = np.nan, 
-                                 programa = np.nan,                                                                 # Add empty column programa
+        dataset = dataset.assign(cod_programa = None, 
+                                 programa = None,                                                                 # Add empty column programa
                                  periodo = folder_files[x][0:8],
                                  tipo = folder_files[x][9:14],
                                  ano = folder_files[x][4:8],
@@ -143,7 +142,7 @@ for x in range(len(folder_files)):
     
 
     # ------------------------- #    
-    # --- Stacking datasets --- #
+    # --- Stacking datasets --- #r
     # ------------------------- #
     if x == 0:    
         dataset_full = dataset
